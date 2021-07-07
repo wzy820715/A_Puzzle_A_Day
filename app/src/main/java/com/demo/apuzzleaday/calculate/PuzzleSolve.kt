@@ -37,10 +37,10 @@ const val DATE = 6
 fun main() = runBlocking {
     val time = measureTimeMillis {
         calculate(MONTH, DATE){
-            println("--------------------------")
-            for (chars in it) {
-                println(chars.contentToString())
-            }
+//            println("--------------------------")
+//            for (chars in it) {
+//                println(chars.contentToString())
+//            }
         }
 //        val outPutData = solveList.let {
 //            if(it.size>=3) it.take(3) else it
