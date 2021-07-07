@@ -1,0 +1,2 @@
+rootProject.name = "A Puzzle A Day"
+include ':app'
