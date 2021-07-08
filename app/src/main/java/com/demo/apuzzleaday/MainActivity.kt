@@ -18,8 +18,8 @@ class MainActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
 
     private val mViewMode: SolveViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
-    private lateinit var mTimerJob: Job
     private var isShowProcessGUI = true
+    private var startTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
                     is PuzzleResult.Success -> {
                         binding.progressBar.visibility = View.GONE
                         binding.btnDatePick.isEnabled = true
-                        mTimerJob.cancel()
+                        binding.tvTimer.text = "${System.currentTimeMillis() - startTime}ms"
                         if (result.list.isNotEmpty()) {
                             binding.solutionView.showSolution(result.list.first())
                         }
@@ -66,7 +66,8 @@ class MainActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        recordCostTime()
+        startTime = System.currentTimeMillis()
+        binding.tvTimer.text = "..."
         if(!isShowProcessGUI){
             binding.progressBar.visibility = View.VISIBLE
         }
@@ -74,16 +75,5 @@ class MainActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
         binding.btnDatePick.isEnabled = false
         binding.solutionView.setNewDate(month, dayOfMonth)
         mViewMode.solve(month + 1, dayOfMonth, isShowProcessGUI)
-    }
-
-    private fun recordCostTime() {
-        val startTime = System.currentTimeMillis()
-        mTimerJob = lifecycleScope.launch(Dispatchers.Default) {
-            while (isActive) {
-                launch(Dispatchers.Main) {
-                    binding.tvTimer.text = "${System.currentTimeMillis() - startTime}ms"
-                }
-            }
-        }
     }
 }
