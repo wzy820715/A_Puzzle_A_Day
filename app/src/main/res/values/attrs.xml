@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="PieceView">
+        <attr name="pieceShape"/>
+        <attr name="pieceColor" format="color|reference" />
+    </declare-styleable>
+
+    <attr name="pieceShape" format="enum">
+        <enum name="shape_Z" value="0"/>
+        <enum name="shape_S" value="1"/>
+        <enum name="shape_L" value="2"/>
+        <enum name="shape_V" value="3"/>
+        <enum name="shape_P" value="4"/>
+        <enum name="shape_T" value="5"/>
+        <enum name="shape_U" value="6"/>
+        <enum name="shape_I" value="7"/>
+    </attr>
+
+</resources>

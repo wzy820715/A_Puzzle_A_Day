@@ -1,5 +1,6 @@
 package com.demo.apuzzleaday
 
+import android.content.Context
 import android.content.res.Resources
 import android.util.TypedValue
 import androidx.datastore.core.DataStore
@@ -17,6 +18,11 @@ val Float.dp: Float
         this,
         Resources.getSystem().displayMetrics
     )
+
+fun getScreenWidth(context: Context): Int {
+    val dm = context.resources.displayMetrics
+    return dm.widthPixels
+}
 
 suspend fun <T> DataStore<Preferences>.setValue(key: Preferences.Key<T>, value: T) {
     this.edit { preferences ->

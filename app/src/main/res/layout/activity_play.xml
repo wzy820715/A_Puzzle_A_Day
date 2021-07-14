@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <com.demo.apuzzleaday.view.play.PuzzleDragLayout
+        android:id="@+id/drag_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.demo.apuzzleaday.view.play.PieceView
+            android:id="@+id/piece_l"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:pieceShape="shape_L"
+            app:pieceColor="#aa33a3dc"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/piece_s"/>
+
+        <com.demo.apuzzleaday.view.play.PieceView
+            android:id="@+id/piece_s"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:pieceShape="shape_S"
+            app:pieceColor="#aaffd400"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/piece_l"
+            app:layout_constraintRight_toLeftOf="@id/piece_p"/>
+
+        <com.demo.apuzzleaday.view.play.PieceView
+            android:id="@+id/piece_p"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:pieceShape="shape_P"
+            app:pieceColor="#aa9b95c9"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/piece_s"
+            app:layout_constraintRight_toLeftOf="@id/piece_z"/>
+
+        <com.demo.apuzzleaday.view.play.PieceView
+            android:id="@+id/piece_z"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:pieceShape="shape_Z"
+            app:pieceColor="#aa8e7437"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/piece_p"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+        <com.demo.apuzzleaday.view.play.PieceView
+            android:id="@+id/piece_u"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:pieceShape="shape_U"
+            app:pieceColor="#aaf47920"
+            app:layout_constraintBottom_toTopOf="@id/piece_t"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <com.demo.apuzzleaday.view.play.PieceView
+            android:id="@+id/piece_t"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:pieceShape="shape_T"
+            app:pieceColor="#aa45b97c"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/piece_i"/>
+
+        <com.demo.apuzzleaday.view.play.PieceView
+            android:id="@+id/piece_i"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:pieceShape="shape_I"
+            app:pieceColor="#aaef5b9c"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/piece_t"
+            app:layout_constraintRight_toLeftOf="@id/piece_v"/>
+
+        <com.demo.apuzzleaday.view.play.PieceView
+            android:id="@+id/piece_v"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:pieceShape="shape_V"
+            app:pieceColor="#aaed1941"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/piece_i"
+            app:layout_constraintRight_toRightOf="parent"/>
+    </com.demo.apuzzleaday.view.play.PuzzleDragLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
