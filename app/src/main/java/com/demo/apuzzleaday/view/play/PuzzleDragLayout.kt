@@ -3,9 +3,11 @@ package com.demo.apuzzleaday.view.play
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.customview.widget.ViewDragHelper
@@ -16,7 +18,8 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs) {
+class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs),
+    GestureDetector.OnGestureListener{
 
     companion object{
         const val GRID_COUNT = 10
@@ -31,11 +34,10 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     private var startY = 0f
     private var targetMonth = -1
     private var targetDate = -1
-    private var downX = 0f
-    private var downY = 0f
     private lateinit var touchedView: PieceView
     private val childrenPosMap = mutableMapOf<PieceView, Pair<Int, Int>>()
     private val mDragHelper = ViewDragHelper.create(this, DragHelperCallback())
+    private val gestureDetector = GestureDetectorCompat(context, this)
 
     init {
         setWillNotDraw(false)
@@ -105,41 +107,9 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         mDragHelper.processTouchEvent(event)
-
         if(!this::touchedView.isInitialized)
             return false
-
-        val x: Float = event.x
-        val y: Float = event.y
-
-        val isViewUnder = mDragHelper.isViewUnder(
-            touchedView, x.toInt(),
-            y.toInt()
-        )
-        when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> {
-                downX = x
-                downY = y
-            }
-            MotionEvent.ACTION_POINTER_UP -> {
-                touchedView.flipPiece()
-            }
-            MotionEvent.ACTION_UP -> {
-                val dx: Float = x - downX
-                val dy: Float = y - downY
-                val slop = mDragHelper.touchSlop
-                if (dx * dx + dy * dy < slop * slop && isViewUnder) {
-                    performClick()
-                }
-            }
-        }
-        return true
-    }
-
-    override fun performClick(): Boolean {
-        childrenPosMap[touchedView] = Pair(touchedView.left, touchedView.top)
-        touchedView.rotatePiece()
-        return super.performClick()
+        return gestureDetector.onTouchEvent(event)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -147,7 +117,6 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
         canvas.save()
         canvas.translate(startX, startY)
         drawMonthAndDate(canvas)
-//        drawGuides(canvas)
         canvas.restore()
     }
 
@@ -250,6 +219,33 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
         }
     }
 
+    override fun onDown(e: MotionEvent): Boolean {
+        return true
+    }
+
+    override fun onSingleTapUp(e: MotionEvent): Boolean {
+        childrenPosMap[touchedView] = Pair(touchedView.left, touchedView.top)
+        touchedView.rotatePiece()
+        return true
+    }
+
+    override fun onLongPress(e: MotionEvent) {
+        touchedView.flipPiece()
+    }
+
+    override fun onShowPress(e: MotionEvent?) {
+    }
+
+    override fun onScroll(e1: MotionEvent?,e2: MotionEvent?,
+                          distanceX: Float, distanceY: Float): Boolean {
+        return false
+    }
+
+    override fun onFling(e1: MotionEvent?, e2: MotionEvent?,
+                         velocityX: Float, velocityY: Float): Boolean {
+        return false
+    }
+
     private fun drawMonthAndDate(canvas: Canvas) {
         var col: Int
         var row: Int
@@ -296,13 +292,6 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
                 (row + 2) * gridWidth + gridHeight / 2 - (textBounds.top + textBounds.bottom) / 2,
                 if (targetDate == i) paint_text_bold else paint_text
             )
-        }
-    }
-
-    private fun drawGuides(canvas: Canvas) {
-        for (i in 0..7) {
-            canvas.drawLine(0f, i * gridHeight, puzzleWidth, i * gridHeight, paint_text)
-            canvas.drawLine(i * gridWidth, 0f, i * gridWidth, puzzleHeight, paint_text)
         }
     }
 
