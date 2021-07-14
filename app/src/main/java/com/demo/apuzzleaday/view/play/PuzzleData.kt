@@ -35,8 +35,9 @@ class PuzzleData {
             charArrayOf('V', 'V', 'V'))
 
         val frontU = arrayOf(
-            charArrayOf('U', '0', 'U'),
-            charArrayOf('U', 'U', 'U'))
+            charArrayOf('U', 'U'),
+            charArrayOf('U', '0'),
+            charArrayOf('U', 'U'))
 
         val frontT = arrayOf(
             charArrayOf('0', 'T'),

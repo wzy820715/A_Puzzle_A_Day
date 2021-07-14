@@ -18,8 +18,12 @@ import kotlin.math.roundToInt
 
 class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs) {
 
+    companion object{
+        const val GRID_COUNT = 10
+    }
+
     private val textBounds = Rect()
-    private val gridWidth = (getScreenWidth(context) / 9).toFloat()
+    private val gridWidth = (getScreenWidth(context) / GRID_COUNT).toFloat()
     private val gridHeight = gridWidth
     private val puzzleWidth = gridWidth * PuzzleData.boundaryArray[0].size
     private val puzzleHeight = gridHeight * PuzzleData.boundaryArray.size
@@ -176,7 +180,6 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
                         if (left < stepX + startX - gridWidth.toInt() / 2) {
                             settleLeft = (stepX - gridWidth + startX).roundToInt()
                         } else {
-
                             if (stepX + startX >= puzzleWidth + startX - targetView.width + gridWidth) {
                                 settleLeft = -1
                                 settleTop = -1
@@ -201,9 +204,10 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
                 }
             }
             if (settleLeft > -1 || settleTop > -1) {
-                mDragHelper.settleCapturedViewAt(settleLeft, settleTop)
+//                mDragHelper.settleCapturedViewAt(settleLeft, settleTop)
+                targetView.layout(settleLeft, settleTop,
+                    settleLeft + targetView.width, settleTop+ targetView.height)
                 childrenPosMap[targetView] = Pair(settleLeft, settleTop)
-                invalidate()
                 return
             }
         }
@@ -214,6 +218,7 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     private inner class DragHelperCallback : ViewDragHelper.Callback() {
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
             touchedView = child as PieceView
+            bringChildToFront(child)
             return true
         }
 

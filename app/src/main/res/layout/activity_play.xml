@@ -56,14 +56,6 @@
             app:layout_constraintLeft_toRightOf="@id/piece_p"
             app:layout_constraintRight_toRightOf="parent"/>
 
-        <com.demo.apuzzleaday.view.play.PieceView
-            android:id="@+id/piece_u"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:pieceShape="shape_U"
-            app:pieceColor="#aaf47920"
-            app:layout_constraintBottom_toTopOf="@id/piece_t"
-            app:layout_constraintLeft_toLeftOf="parent"/>
 
         <com.demo.apuzzleaday.view.play.PieceView
             android:id="@+id/piece_t"
@@ -94,6 +86,16 @@
             app:pieceColor="#aaed1941"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/piece_i"
+            app:layout_constraintRight_toLeftOf="@id/piece_u"/>
+
+        <com.demo.apuzzleaday.view.play.PieceView
+            android:id="@+id/piece_u"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:pieceShape="shape_U"
+            app:pieceColor="#aaf47920"
+            app:layout_constraintBottom_toBottomOf="@id/piece_t"
+            app:layout_constraintLeft_toRightOf="@id/piece_v"
             app:layout_constraintRight_toRightOf="parent"/>
     </com.demo.apuzzleaday.view.play.PuzzleDragLayout>
 

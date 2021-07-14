@@ -13,7 +13,7 @@ import com.demo.apuzzleaday.getScreenWidth
 class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private var mPaint: Paint
-    private val gridWidth = getScreenWidth(context) / 9
+    private val gridWidth = getScreenWidth(context) / PuzzleDragLayout.GRID_COUNT
     private var curAngle = 0
     private var pieceArray: Array<CharArray>
     private var originOutlineArray : Array<CharArray?>
