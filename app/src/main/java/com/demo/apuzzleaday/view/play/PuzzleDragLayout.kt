@@ -30,6 +30,8 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     private val gridHeight = gridWidth
     private val puzzleWidth = gridWidth * PuzzleData.boundaryArray[0].size
     private val puzzleHeight = gridHeight * PuzzleData.boundaryArray.size
+    private var downX = 0f
+    private var downY = 0f
     private var startX = 0f
     private var startY = 0f
     private var targetMonth = -1
@@ -106,6 +108,12 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                downX = event.x
+                downY = event.y
+            }
+        }
         mDragHelper.processTouchEvent(event)
         if(!this::touchedView.isInitialized)
             return false
@@ -186,9 +194,28 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
 
     private inner class DragHelperCallback : ViewDragHelper.Callback() {
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
-            touchedView = child as PieceView
-            bringChildToFront(child)
-            return true
+            val suspendedView = child as PieceView
+            val blankTouch = suspendedView.isTouchBlankArea(downX, downY)
+            return if(blankTouch){
+                val index = indexOfChild(child)
+                if (index >= 0) {
+                    loop@for(i in index-1 downTo 0){
+                        val underView = getChildAt(i) as PieceView
+                        if(mDragHelper.isViewUnder(underView, downX.toInt(), downY.toInt()) &&
+                            !underView.isTouchBlankArea(downX, downY)){
+                            removeViewAt(index)
+                            addView(child, i)
+                            mDragHelper.captureChildView(underView, pointerId)
+                            break@loop
+                        }
+                    }
+                }
+                false
+            }else{
+                touchedView = suspendedView
+                bringChildToFront(child)
+                true
+            }
         }
 
         override fun onViewDragStateChanged(state: Int) {
@@ -224,7 +251,8 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun onSingleTapUp(e: MotionEvent): Boolean {
-        if(mDragHelper.isViewUnder(touchedView, e.x.toInt(), e.y.toInt())){
+        if(mDragHelper.isViewUnder(touchedView, e.x.toInt(), e.y.toInt()) &&
+            !touchedView.isTouchBlankArea(e.x, e.y)){
             childrenPosMap[touchedView] = Pair(touchedView.left, touchedView.top)
             touchedView.rotatePiece()
         }
@@ -232,7 +260,8 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun onLongPress(e: MotionEvent) {
-        if(mDragHelper.isViewUnder(touchedView, e.x.toInt(), e.y.toInt()))
+        if(mDragHelper.isViewUnder(touchedView, e.x.toInt(), e.y.toInt()) &&
+            !touchedView.isTouchBlankArea(e.x, e.y))
             touchedView.flipPiece()
     }
 

@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.animation.doOnEnd
@@ -18,6 +19,9 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private var pieceArray: Array<CharArray>
     private var originOutlineArray : Array<CharArray?>
     private var rotateOutlineArray : Array<CharArray?>
+    private val blankRectList: MutableList<Rect> by lazy {
+        recordBlankRect()
+    }
     private val animator by lazy {
         ObjectAnimator.ofFloat(this, "rotation",0f, 0f).apply {
             duration = 200
@@ -111,6 +115,7 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             }
         }
         pieceArray = rotateArray
+        updateBlankRectList()
     }
 
     private fun flipArray(){
@@ -122,6 +127,38 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
                 }
             }
         }
+        updateBlankRectList()
+    }
+
+    private fun recordBlankRect(): MutableList<Rect>{
+        val rectList = mutableListOf<Rect>()
+        for ((y, row) in pieceArray.withIndex()) {
+            for ((x, col) in row.withIndex()) {
+                if(col == '0'){
+                    rectList.add(Rect(x * gridWidth, y * gridWidth,
+                            x * gridWidth + gridWidth, y * gridWidth + gridWidth))
+                }
+            }
+        }
+        return rectList
+    }
+
+    private fun updateBlankRectList(){
+        blankRectList.clear()
+        blankRectList.addAll(recordBlankRect())
+    }
+
+    fun isTouchBlankArea(touchX: Float, touchY: Float): Boolean{
+        val relX = (touchX - left).toInt()
+        val relY = (touchY - top).toInt()
+        var flag = false
+        for (rect in blankRectList) {
+            if(rect.contains(relX, relY)){
+                flag = true
+                break
+            }
+        }
+        return flag
     }
 
 }
