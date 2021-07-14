@@ -224,13 +224,16 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun onSingleTapUp(e: MotionEvent): Boolean {
-        childrenPosMap[touchedView] = Pair(touchedView.left, touchedView.top)
-        touchedView.rotatePiece()
+        if(mDragHelper.isViewUnder(touchedView, e.x.toInt(), e.y.toInt())){
+            childrenPosMap[touchedView] = Pair(touchedView.left, touchedView.top)
+            touchedView.rotatePiece()
+        }
         return true
     }
 
     override fun onLongPress(e: MotionEvent) {
-        touchedView.flipPiece()
+        if(mDragHelper.isViewUnder(touchedView, e.x.toInt(), e.y.toInt()))
+            touchedView.flipPiece()
     }
 
     override fun onShowPress(e: MotionEvent?) {
