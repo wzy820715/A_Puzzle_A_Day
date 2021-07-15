@@ -34,7 +34,7 @@ class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
     private lateinit var binding: LayoutPuzzleSolverBinding
     private lateinit var dataStore: DataStore<Preferences>
 
-    private val HINT_PIECES = charArrayOf('S'.uppercaseChar(), 'T'.uppercaseChar())
+    private val HINT_PIECES = charArrayOf('S'.uppercaseChar(), 'U'.uppercaseChar())
 
     companion object{
         private val SHOW_FULL_RESULT = booleanPreferencesKey("show_full_result")
