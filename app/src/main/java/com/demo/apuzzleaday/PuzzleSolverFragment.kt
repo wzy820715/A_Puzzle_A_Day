@@ -1,43 +1,58 @@
 package com.demo.apuzzleaday
 
 import android.app.DatePickerDialog
-import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.DatePicker
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.demo.apuzzleaday.databinding.ActivityMainBinding
+import com.demo.apuzzleaday.databinding.LayoutPuzzleSolverBinding
 import com.demo.apuzzleaday.entity.PuzzleResult
 import com.demo.apuzzleaday.viewmodel.SolveViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
 import java.util.*
 
-class MainActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
+class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
 
-    private val mViewMode: SolveViewModel by viewModels()
-    private lateinit var binding: ActivityMainBinding
-    private var isShowProcessGUI = true
     private var startTime = 0L
+    private var isShowProcessGUI = true
+    private lateinit var binding: LayoutPuzzleSolverBinding
+    private val mViewMode: SolveViewModel by viewModels({requireActivity()})
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?): View {
+        binding = LayoutPuzzleSolverBinding.inflate(inflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         init()
     }
 
     private fun init() {
         binding.btnDatePick.setOnLongClickListener {
             isShowProcessGUI = !isShowProcessGUI
-            Toast.makeText(this@MainActivity,
+            Toast.makeText(requireActivity(),
                 if(isShowProcessGUI) "GUI模式" else "无GUI模式", Toast.LENGTH_SHORT).show()
             false
         }
+        binding.btnDatePick.setOnClickListener {
+            val calendar: Calendar = Calendar.getInstance()
+            val dialog = DatePickerDialog(
+                requireActivity(), this@PuzzleSolverFragment,
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MARCH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+            dialog.show()
+        }
         lifecycleScope.launch {
-            mViewMode.resultLiveData.observe(this@MainActivity) { result ->
+            mViewMode.resultLiveData.observe(requireActivity()) { result ->
                 when (result) {
                     is PuzzleResult.Process -> {
                         binding.solutionView.showSolution(result.process)
@@ -55,21 +70,6 @@ class MainActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
         }
     }
 
-    fun onBtnClicked(@Suppress("UNUSED_PARAMETER") view: View) {
-        val calendar: Calendar = Calendar.getInstance()
-        val dialog = DatePickerDialog(
-            this, this,
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MARCH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-        dialog.show()
-    }
-
-    fun onPlayBtnClicked(@Suppress("UNUSED_PARAMETER") view: View) {
-        startActivity(Intent(this, PuzzlePlayActivity::class.java))
-    }
-
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
         startTime = System.currentTimeMillis()
         binding.tvTimer.text = "..."
@@ -81,4 +81,5 @@ class MainActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
         binding.solutionView.setNewDate(month, dayOfMonth)
         mViewMode.solve(month + 1, dayOfMonth, isShowProcessGUI)
     }
+
 }
