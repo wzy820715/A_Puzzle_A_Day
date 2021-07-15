@@ -11,6 +11,7 @@ import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.customview.widget.ViewDragHelper
+import com.demo.apuzzleaday.R
 import com.demo.apuzzleaday.dp
 import com.demo.apuzzleaday.getScreenWidth
 import java.util.*
@@ -30,6 +31,8 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     private val gridHeight = gridWidth
     private val puzzleWidth = gridWidth * PuzzleData.boundaryArray[0].size
     private val puzzleHeight = gridHeight * PuzzleData.boundaryArray.size
+    private val tips1 = context.getString(R.string.gesture_tips_1)
+    private val tips2 = context.getString(R.string.gesture_tips_2)
     private var downX = 0f
     private var downY = 0f
     private var startX = 0f
@@ -329,20 +332,18 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     private fun drawTipsText(canvas: Canvas) {
-        val tip_text_1 = "Single Tap: Rotate"
-        val tip_text_2 = "Long Press: Flip"
-        paint_tips.getTextBounds(tip_text_1, 0, tip_text_1.length, textBounds)
+        paint_tips.getTextBounds(tips1, 0, tips1.length, textBounds)
         val tip_text_1_height = textBounds.bottom - textBounds.top
-        paint_tips.getTextBounds(tip_text_2, 0, tip_text_2.length, textBounds)
+        paint_tips.getTextBounds(tips2, 0, tips2.length, textBounds)
         val tip_text_2_height = textBounds.bottom - textBounds.top
         val topStart = (gridWidth - tip_text_1_height - tip_text_2_height) / 2
         canvas.drawText(
-            tip_text_1,
+            tips1,
             4 * gridWidth, 6 * gridWidth + topStart * 2,
             paint_tips)
 
         canvas.drawText(
-            tip_text_2,
+            tips2,
             4 * gridWidth, 6 * gridWidth + topStart * 2 + tip_text_2_height,
             paint_tips)
     }

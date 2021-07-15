@@ -57,7 +57,8 @@ class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
         binding.btnDatePick.setOnLongClickListener {
             isShowProcessGUI = !isShowProcessGUI
             Toast.makeText(requireActivity(),
-                if(isShowProcessGUI) "GUI模式" else "无GUI模式", Toast.LENGTH_SHORT).show()
+                if(isShowProcessGUI) getString(R.string.toast_text_gui_on)
+                else getString(R.string.toast_text_gui_off), Toast.LENGTH_SHORT).show()
             false
         }
         binding.btnDatePick.setOnClickListener {
@@ -80,7 +81,8 @@ class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
                         isProcessing = false
                         binding.progressBar.visibility = View.GONE
                         binding.btnDatePick.isEnabled = true
-                        binding.tvTimer.text = "${System.currentTimeMillis() - startTime}ms"
+                        binding.tvTimer.text = getString(R.string.timer_ms,
+                            (System.currentTimeMillis() - startTime).toString())
                         if (result.list.isNotEmpty()) {
                             result_bounds = result.list.first()
                             updateResult()
@@ -107,7 +109,8 @@ class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
         if(!isShowProcessGUI){
             binding.progressBar.visibility = View.VISIBLE
         }
-        binding.btnDatePick.text = "${month + 1}月${dayOfMonth}日"
+        binding.btnDatePick.text = getString(R.string.btn_text_showed_date,
+            (month + 1).toString(), dayOfMonth.toString())
         binding.btnDatePick.isEnabled = false
         binding.solutionView.setNewDate(month, dayOfMonth)
         mViewMode.solve(month + 1, dayOfMonth, isShowProcessGUI)

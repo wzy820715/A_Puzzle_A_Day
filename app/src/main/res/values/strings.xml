@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">A Solution A Day</string>
+    <string name="gesture_tips_1">Single Tap: Rotate</string>
+    <string name="gesture_tips_2">LongPress: Flip</string>
+    <string name="checkbox_text">Show the full result</string>
+    <string name="timer_text">LongPress to switch mode</string>
+    <string name="toast_text_gui_on">GUI mode ON</string>
+    <string name="toast_text_gui_off">GUI mode OFF</string>
+    <string name="btn_text_pick_date">Pick a Date</string>
+    <string name="timer_ms" translatable="false">%1$sms</string>
+    <string name="btn_text_showed_date">%1$s-%2$s</string>
 </resources>
