@@ -19,9 +19,9 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs),
-    GestureDetector.OnGestureListener{
+    GestureDetector.OnGestureListener {
 
-    companion object{
+    companion object {
         const val GRID_COUNT = 10
     }
 
@@ -65,6 +65,11 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     private val paint_text_bold = Paint(paint_text).apply {
         typeface = Typeface.DEFAULT_BOLD
         color = 0xdd000000.toInt()
+    }
+
+    private val paint_tips = Paint(paint_text).apply {
+        textSize = 12f.dp
+        color = 0xffcccccc.toInt()
     }
 
     private val paint_grid = Paint(paint_text).apply {
@@ -115,7 +120,7 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
             }
         }
         mDragHelper.processTouchEvent(event)
-        if(!this::touchedView.isInitialized)
+        if (!this::touchedView.isInitialized)
             return false
         return gestureDetector.onTouchEvent(event)
     }
@@ -125,6 +130,7 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
         canvas.save()
         canvas.translate(startX, startY)
         drawMonthAndDate(canvas)
+        drawTipsText(canvas)
         canvas.restore()
     }
 
@@ -196,10 +202,10 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
             val suspendedView = child as PieceView
             val blankTouch = suspendedView.isTouchBlankArea(downX, downY)
-            return if(blankTouch){
+            return if (blankTouch) {
                 val index = indexOfChild(child)
                 if (index >= 0) {
-                    loop@for(i in index-1 downTo 0){
+                    loop@ for (i in index - 1 downTo 0) {
                         val underView = getChildAt(i) as PieceView
                         if(mDragHelper.isViewUnder(underView, downX.toInt(), downY.toInt()) &&
                             !underView.isTouchBlankArea(downX, downY)){
@@ -211,22 +217,11 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
                     }
                 }
                 false
-            }else{
+            } else {
                 touchedView = suspendedView
                 bringChildToFront(child)
                 true
             }
-        }
-
-        override fun onViewDragStateChanged(state: Int) {
-        }
-
-        override fun onViewPositionChanged(
-            changedView: View, left: Int, top: Int,
-            dx: Int, dy: Int) {
-        }
-
-        override fun onViewCaptured(capturedChild: View, activePointerId: Int) {
         }
 
         override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
@@ -251,8 +246,9 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun onSingleTapUp(e: MotionEvent): Boolean {
-        if(mDragHelper.isViewUnder(touchedView, e.x.toInt(), e.y.toInt()) &&
-            !touchedView.isTouchBlankArea(e.x, e.y)){
+        if (mDragHelper.isViewUnder(touchedView, e.x.toInt(), e.y.toInt()) &&
+            !touchedView.isTouchBlankArea(e.x, e.y)
+        ) {
             childrenPosMap[touchedView] = Pair(touchedView.left, touchedView.top)
             touchedView.rotatePiece()
         }
@@ -260,21 +256,26 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun onLongPress(e: MotionEvent) {
-        if(mDragHelper.isViewUnder(touchedView, e.x.toInt(), e.y.toInt()) &&
-            !touchedView.isTouchBlankArea(e.x, e.y))
+        if (mDragHelper.isViewUnder(touchedView, e.x.toInt(), e.y.toInt()) &&
+            !touchedView.isTouchBlankArea(e.x, e.y)
+        )
             touchedView.flipPiece()
     }
 
     override fun onShowPress(e: MotionEvent?) {
     }
 
-    override fun onScroll(e1: MotionEvent?,e2: MotionEvent?,
-                          distanceX: Float, distanceY: Float): Boolean {
+    override fun onScroll(
+        e1: MotionEvent?, e2: MotionEvent?,
+        distanceX: Float, distanceY: Float
+    ): Boolean {
         return false
     }
 
-    override fun onFling(e1: MotionEvent?, e2: MotionEvent?,
-                         velocityX: Float, velocityY: Float): Boolean {
+    override fun onFling(
+        e1: MotionEvent?, e2: MotionEvent?,
+        velocityX: Float, velocityY: Float
+    ): Boolean {
         return false
     }
 
@@ -325,6 +326,25 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
                 if (targetDate == i) paint_text_bold else paint_text
             )
         }
+    }
+
+    private fun drawTipsText(canvas: Canvas) {
+        val tip_text_1 = "Single Tap: Rotate"
+        val tip_text_2 = "Long Press: Flip"
+        paint_tips.getTextBounds(tip_text_1, 0, tip_text_1.length, textBounds)
+        val tip_text_1_height = textBounds.bottom - textBounds.top
+        paint_tips.getTextBounds(tip_text_2, 0, tip_text_2.length, textBounds)
+        val tip_text_2_height = textBounds.bottom - textBounds.top
+        val topStart = (gridWidth - tip_text_1_height - tip_text_2_height) / 2
+        canvas.drawText(
+            tip_text_1,
+            4 * gridWidth, 6 * gridWidth + topStart * 2,
+            paint_tips)
+
+        canvas.drawText(
+            tip_text_2,
+            4 * gridWidth, 6 * gridWidth + topStart * 2 + tip_text_2_height,
+            paint_tips)
     }
 
 }
