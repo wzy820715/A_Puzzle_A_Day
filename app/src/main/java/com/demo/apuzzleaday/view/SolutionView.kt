@@ -64,16 +64,24 @@ class SolutionView(context: Context, attrs: AttributeSet?) : View(context, attrs
         gridHeight = (height / GRID_COUNT).toFloat()
     }
 
-    fun showSolution(result: BoundaryMap) {
-        dataList.clear()
+    fun showSolution(result: BoundaryMap,
+                     process: ((MutableMap<Char, MutableList<IntArray>>) ->
+                     MutableMap<Char, MutableList<IntArray>>)? = null) {
+        val transferMap = mutableMapOf<Char, MutableList<IntArray>>()
         for ((i, row) in result.withIndex()) {
             for ((j, col) in row.withIndex()) {
                 if (col == 'm' || col == 'd')
                     continue
-                if (!dataList.containsKey(col))
-                    dataList[col] = mutableListOf()
-                dataList[col]?.add(intArrayOf(i, j))
+                if (!transferMap.containsKey(col))
+                    transferMap[col] = mutableListOf()
+                transferMap[col]?.add(intArrayOf(i, j))
             }
+        }
+        dataList.clear()
+        if (process != null) {
+            dataList.putAll(process(transferMap))
+        }else{
+            dataList.putAll(transferMap)
         }
         postInvalidateOnAnimation()
     }

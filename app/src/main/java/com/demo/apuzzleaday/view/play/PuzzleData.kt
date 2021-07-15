@@ -14,15 +14,15 @@ class PuzzleData {
         )
 
         val frontZ = arrayOf(
-            charArrayOf('Z', '0'),
-            charArrayOf('Z', '0'),
+            charArrayOf('0', 'Z'),
+            charArrayOf('0', 'Z'),
             charArrayOf('Z', 'Z'),
-            charArrayOf('0', 'Z'))
+            charArrayOf('Z', '0'))
 
         val frontP = arrayOf(
-            charArrayOf('P', '0'),
             charArrayOf('P', 'P'),
-            charArrayOf('P', 'P'))
+            charArrayOf('P', 'P'),
+            charArrayOf('0', 'P'))
 
         val frontI = arrayOf(
             charArrayOf('I', 'I'),
@@ -30,31 +30,31 @@ class PuzzleData {
             charArrayOf('I', 'I'))
 
         val frontV = arrayOf(
-            charArrayOf('V', '0', '0'),
-            charArrayOf('V', '0', '0'),
+            charArrayOf('0', '0', 'V'),
+            charArrayOf('0', '0', 'V'),
             charArrayOf('V', 'V', 'V'))
 
         val frontU = arrayOf(
             charArrayOf('U', 'U'),
-            charArrayOf('U', '0'),
+            charArrayOf('0', 'U'),
             charArrayOf('U', 'U'))
 
         val frontT = arrayOf(
-            charArrayOf('0', 'T'),
+            charArrayOf('T', '0'),
+            charArrayOf('T', '0'),
             charArrayOf('T', 'T'),
-            charArrayOf('0', 'T'),
-            charArrayOf('0', 'T'))
+            charArrayOf('T', '0'))
 
         val frontS = arrayOf(
-            charArrayOf('0', 'S', 'S'),
+            charArrayOf('S', 'S', '0'),
             charArrayOf('0', 'S', '0'),
-            charArrayOf('S', 'S', '0'))
+            charArrayOf('0', 'S', 'S'))
 
         val frontL = arrayOf(
+            charArrayOf('L', 'L'),
             charArrayOf('L', '0'),
             charArrayOf('L', '0'),
-            charArrayOf('L', '0'),
-            charArrayOf('L', 'L'))
+            charArrayOf('L', '0'))
 
     }
 
