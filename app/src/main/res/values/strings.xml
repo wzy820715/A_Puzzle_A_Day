@@ -8,5 +8,5 @@
     <string name="toast_text_gui_off">GUI mode OFF</string>
     <string name="btn_text_pick_date">Pick a Date</string>
     <string name="timer_ms" translatable="false">%1$sms</string>
-    <string name="btn_text_showed_date">%1$s-%2$s</string>
+    <string name="btn_text_showed_date">%1$s %2$s</string>
 </resources>

@@ -52,6 +52,7 @@
         android:layout_marginHorizontal="25dp"
         android:layout_marginBottom="10dp"
         android:text="@string/btn_text_pick_date"
+        android:textAllCaps="false"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

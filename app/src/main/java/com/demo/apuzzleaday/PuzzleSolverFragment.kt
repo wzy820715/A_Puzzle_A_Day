@@ -20,6 +20,7 @@ import com.demo.apuzzleaday.entity.PuzzleResult
 import com.demo.apuzzleaday.viewmodel.SolveViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.text.DateFormatSymbols
 import java.util.*
 
 class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
@@ -110,7 +111,7 @@ class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
             binding.progressBar.visibility = View.VISIBLE
         }
         binding.btnDatePick.text = getString(R.string.btn_text_showed_date,
-            (month + 1).toString(), dayOfMonth.toString())
+            DateFormatSymbols().months[month], dayOfMonth.toString())
         binding.btnDatePick.isEnabled = false
         binding.solutionView.setNewDate(month, dayOfMonth)
         mViewMode.solve(month + 1, dayOfMonth, isShowProcessGUI)
