@@ -10,8 +10,7 @@ class PuzzleData {
             charArrayOf('0', '0', '0', '0', '0', '0', '0'),
             charArrayOf('0', '0', '0', '0', '0', '0', '0'),
             charArrayOf('0', '0', '0', '0', '0', '0', '0'),
-            charArrayOf('0', '0', '0', 'x', 'x', 'x', 'x')
-        )
+            charArrayOf('0', '0', '0', 'x', 'x', 'x', 'x'))
 
         val frontZ = arrayOf(
             charArrayOf('0', 'Z'),
