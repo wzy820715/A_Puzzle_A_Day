@@ -2,7 +2,7 @@
     <string name="app_name">A Solution A Day</string>
     <string name="gesture_tips_1">Single Tap: Rotate</string>
     <string name="gesture_tips_2">LongPress: Flip</string>
-    <string name="checkbox_text">Show the full result</string>
+    <string name="checkbox_text">Show full result</string>
     <string name="timer_text">LongPress to switch mode</string>
     <string name="toast_text_gui_on">GUI mode ON</string>
     <string name="toast_text_gui_off">GUI mode OFF</string>
