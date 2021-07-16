@@ -333,18 +333,16 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
 
     private fun drawTipsText(canvas: Canvas) {
         paint_tips.getTextBounds(tips1, 0, tips1.length, textBounds)
-        val tip_text_1_height = textBounds.bottom - textBounds.top
-        paint_tips.getTextBounds(tips2, 0, tips2.length, textBounds)
-        val tip_text_2_height = textBounds.bottom - textBounds.top
-        val topStart = (gridWidth - tip_text_1_height - tip_text_2_height) / 2
+        val tip_text_height = textBounds.bottom - textBounds.top
+        val topStart = (gridWidth - tip_text_height * 2) / 2
         canvas.drawText(
             tips1,
-            4 * gridWidth, 6 * gridWidth + topStart * 2,
+            4 * gridWidth - gridWidth / 2, 6 * gridWidth + topStart + tip_text_height,
             paint_tips)
 
         canvas.drawText(
             tips2,
-            4 * gridWidth, 6 * gridWidth + topStart * 2 + tip_text_2_height,
+            4 * gridWidth - gridWidth / 2, 6 * gridWidth + topStart + tip_text_height * 2,
             paint_tips)
     }
 
