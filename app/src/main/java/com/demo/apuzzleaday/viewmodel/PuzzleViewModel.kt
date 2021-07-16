@@ -5,10 +5,12 @@ import com.demo.apuzzleaday.calculate.calculate
 import com.demo.apuzzleaday.entity.PuzzleResult
 import kotlinx.coroutines.launch
 
-class SolveViewModel : ViewModel() {
+class PuzzleViewModel : ViewModel() {
 
     private val optLiveData = MutableLiveData<PuzzleResult>()
     val resultLiveData : LiveData<PuzzleResult> = optLiveData
+    var isFragmentAdded = false
+    var lastCostTime = 0L
 
     fun solve(month: Int, date: Int, showProcess: Boolean){
         viewModelScope.launch {

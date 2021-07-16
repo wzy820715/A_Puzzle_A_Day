@@ -24,6 +24,11 @@ fun getScreenWidth(context: Context): Int {
     return dm.widthPixels
 }
 
+fun getScreenHeight(context: Context): Int {
+    val dm = context.resources.displayMetrics
+    return dm.heightPixels
+}
+
 suspend fun <T> DataStore<Preferences>.setValue(key: Preferences.Key<T>, value: T) {
     this.edit { preferences ->
         preferences[key] = value

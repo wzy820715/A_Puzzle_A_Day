@@ -17,7 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.demo.apuzzleaday.calculate.BoundaryMap
 import com.demo.apuzzleaday.databinding.LayoutPuzzleSolverBinding
 import com.demo.apuzzleaday.entity.PuzzleResult
-import com.demo.apuzzleaday.viewmodel.SolveViewModel
+import com.demo.apuzzleaday.viewmodel.PuzzleViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.text.DateFormatSymbols
@@ -28,7 +28,7 @@ class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
     private var startTime = 0L
     private var isProcessing = false
     private var isShowProcessGUI = true
-    private val mViewMode: SolveViewModel by viewModels({requireActivity()})
+    private val mViewMode: PuzzleViewModel by viewModels({requireActivity()})
     private var result_part_pieces = mutableMapOf<Char, MutableList<IntArray>>()
     private lateinit var result_bounds: BoundaryMap
     private lateinit var result_all_pieces: MutableMap<Char, MutableList<IntArray>>
@@ -82,8 +82,11 @@ class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
                         isProcessing = false
                         binding.progressBar.visibility = View.GONE
                         binding.btnDatePick.isEnabled = true
+                        if(startTime > 0){
+                            mViewMode.lastCostTime = System.currentTimeMillis() - startTime
+                        }
                         binding.tvTimer.text = getString(R.string.timer_ms,
-                            (System.currentTimeMillis() - startTime).toString())
+                            mViewMode.lastCostTime.toString())
                         if (result.list.isNotEmpty()) {
                             result_bounds = result.list.first()
                             updateResult()

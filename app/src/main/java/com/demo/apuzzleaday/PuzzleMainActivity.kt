@@ -3,11 +3,13 @@ package com.demo.apuzzleaday
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
+import androidx.activity.viewModels
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.demo.apuzzleaday.databinding.ActivityPuzzleMainBinding
+import com.demo.apuzzleaday.viewmodel.PuzzleViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 
@@ -15,6 +17,7 @@ class PuzzleMainActivity: AppCompatActivity() {
 
     private lateinit var binding: ActivityPuzzleMainBinding
     private lateinit var behavior: BottomSheetBehavior<LinearLayout>
+    private val mViewMode: PuzzleViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +43,9 @@ class PuzzleMainActivity: AppCompatActivity() {
     }
 
     private fun setFragment(fragment: Fragment) {
+        if(mViewMode.isFragmentAdded)
+            return
+        mViewMode.isFragmentAdded = true
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         transaction.add(R.id.bottom_sheet, fragment)
         transaction.commitAllowingStateLoss()

@@ -1,36 +1,25 @@
 package com.demo.apuzzleaday.view.play
 
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
-import androidx.core.animation.doOnEnd
 import com.demo.apuzzleaday.R
+import com.demo.apuzzleaday.getScreenHeight
 import com.demo.apuzzleaday.getScreenWidth
+import kotlin.math.min
 
 class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private var mPaint: Paint
-    private val gridWidth = getScreenWidth(context) / PuzzleDragLayout.GRID_COUNT
-    private var curAngle = 0
+    private val gridWidth = (min(getScreenWidth(context), getScreenHeight(context)) / PuzzleDragLayout.GRID_COUNT).toFloat()
     private var pieceArray: Array<CharArray>
     private var originOutlineArray : Array<CharArray?>
     private var rotateOutlineArray : Array<CharArray?>
-    private val blankRectList: MutableList<Rect> by lazy {
+    private val blankRectList: MutableList<RectF> by lazy {
         recordBlankRect()
-    }
-    private val animator by lazy {
-        ObjectAnimator.ofFloat(this, "rotation",0f, 0f).apply {
-            duration = 200
-            doOnEnd {
-                curAngle = (curAngle+90)%360
-                rotateArray()
-                requestLayout()
-            }
-        }
     }
 
     init {
@@ -67,9 +56,6 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     fun rotatePiece(){
-//        animator.setFloatValues(curAngle.toFloat(), (curAngle+90).toFloat())
-//        animator.start()
-//        curAngle = (curAngle+90)%360
         rotateArray()
         requestLayout()
     }
@@ -83,7 +69,7 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val width = gridWidth * pieceArray[0].size
         val height = gridWidth * pieceArray.size
-        setMeasuredDimension(width, height)
+        setMeasuredDimension(width.toInt(), height.toInt())
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -130,12 +116,12 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         updateBlankRectList()
     }
 
-    private fun recordBlankRect(): MutableList<Rect>{
-        val rectList = mutableListOf<Rect>()
+    private fun recordBlankRect(): MutableList<RectF>{
+        val rectList = mutableListOf<RectF>()
         for ((y, row) in pieceArray.withIndex()) {
             for ((x, col) in row.withIndex()) {
                 if(col == '0'){
-                    rectList.add(Rect(x * gridWidth, y * gridWidth,
+                    rectList.add(RectF(x * gridWidth, y * gridWidth,
                             x * gridWidth + gridWidth, y * gridWidth + gridWidth))
                 }
             }
@@ -149,8 +135,8 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     fun isTouchBlankArea(touchX: Float, touchY: Float): Boolean{
-        val relX = (touchX - left).toInt()
-        val relY = (touchY - top).toInt()
+        val relX = touchX - left
+        val relY = touchY - top
         var flag = false
         for (rect in blankRectList) {
             if(rect.contains(relX, relY)){

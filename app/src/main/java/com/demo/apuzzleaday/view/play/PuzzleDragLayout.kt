@@ -13,6 +13,7 @@ import androidx.core.view.children
 import androidx.customview.widget.ViewDragHelper
 import com.demo.apuzzleaday.R
 import com.demo.apuzzleaday.dp
+import com.demo.apuzzleaday.getScreenHeight
 import com.demo.apuzzleaday.getScreenWidth
 import java.util.*
 import kotlin.math.max
@@ -27,7 +28,7 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     private val textBounds = Rect()
-    private val gridWidth = (getScreenWidth(context) / GRID_COUNT).toFloat()
+    private val gridWidth = (min(getScreenWidth(context), getScreenHeight(context)) / GRID_COUNT).toFloat()
     private val gridHeight = gridWidth
     private val puzzleWidth = gridWidth * PuzzleData.boundaryArray[0].size
     private val puzzleHeight = gridHeight * PuzzleData.boundaryArray.size
@@ -337,12 +338,12 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
         val topStart = (gridWidth - tip_text_height * 2) / 2
         canvas.drawText(
             tips1,
-            4 * gridWidth - gridWidth / 2, 6 * gridWidth + topStart + tip_text_height,
+            4 * gridWidth, 6 * gridWidth + topStart + tip_text_height,
             paint_tips)
 
         canvas.drawText(
             tips2,
-            4 * gridWidth - gridWidth / 2, 6 * gridWidth + topStart + tip_text_height * 2,
+            4 * gridWidth, 6 * gridWidth + topStart + tip_text_height * 2,
             paint_tips)
     }
 
