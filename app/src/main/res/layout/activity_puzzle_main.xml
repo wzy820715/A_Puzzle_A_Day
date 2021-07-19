@@ -11,7 +11,7 @@
         android:id="@+id/include"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="34dp"
         layout="@layout/layout_puzzle_game" />
 
     <View
