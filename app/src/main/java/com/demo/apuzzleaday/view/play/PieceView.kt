@@ -19,8 +19,9 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private var originOutlineArray : Array<CharArray?>
     private var rotateOutlineArray : Array<CharArray?>
     private val blankRectList: MutableList<RectF> by lazy {
-        recordBlankRect()
+        recordRect()
     }
+    private val pieceRectList = mutableListOf<Pair<Pair<Int,Int>, RectF>>()
 
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.PieceView)
@@ -55,14 +56,43 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         }
     }
 
-    fun rotatePiece(){
+    fun rotatePiece(touchX: Float, touchY: Float, callback: (Float, Float) -> Unit){
+        val relX = touchX - left
+        val relY = touchY - top
+        val touchRect = RectF()
+        var centerX = 0
+        var centerY = 0
+        for (pair in pieceRectList) {
+            if(pair.second.contains(relX, relY)){
+                touchRect.set(pair.second)
+                centerX = pair.first.first
+                centerY = pair.first.second
+                break
+            }
+        }
+        val moveViewX = (centerX - (pieceArray.size - 1 - centerY)) * gridWidth
+        val moveViewY = (centerY - centerX) * gridWidth
+        callback(moveViewX, moveViewY)
         rotateArray()
         requestLayout()
     }
 
-    fun flipPiece(){
+    fun flipPiece(touchX: Float, touchY: Float, callback: (Float, Float) -> Unit){
+        val relX = touchX - left
+        val relY = touchY - top
+        val touchRect = RectF()
+        var centerX = 0
+        for (pair in pieceRectList) {
+            if(pair.second.contains(relX, relY)){
+                touchRect.set(pair.second)
+                centerX = pair.first.first
+                break
+            }
+        }
+        val moveViewX = (centerX - (pieceArray[0].size - 1 - centerX)) * gridWidth
+        callback(moveViewX, 0f)
         flipArray()
-        invalidate()
+        requestLayout()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -82,8 +112,8 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
                 canvas.drawRect(
                     x.toFloat() * gridWidth,
                     y.toFloat() * gridWidth,
-                    (x * gridWidth + gridWidth).toFloat(),
-                    (y * gridWidth + gridWidth).toFloat(),
+                    (x * gridWidth + gridWidth),
+                    (y * gridWidth + gridWidth),
                     mPaint
                 )
             }
@@ -116,22 +146,28 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         updateBlankRectList()
     }
 
-    private fun recordBlankRect(): MutableList<RectF>{
+    private fun recordRect(): MutableList<RectF>{
         val rectList = mutableListOf<RectF>()
+        val pieceList = mutableListOf<Pair<Pair<Int,Int>, RectF>>()
         for ((y, row) in pieceArray.withIndex()) {
             for ((x, col) in row.withIndex()) {
                 if(col == '0'){
                     rectList.add(RectF(x * gridWidth, y * gridWidth,
                             x * gridWidth + gridWidth, y * gridWidth + gridWidth))
+                }else{
+                    pieceList.add(Pair(Pair(x, y), RectF(x * gridWidth, y * gridWidth,
+                        x * gridWidth + gridWidth, y * gridWidth + gridWidth)))
                 }
             }
         }
+        pieceRectList.clear()
+        pieceRectList.addAll(pieceList)
         return rectList
     }
 
     private fun updateBlankRectList(){
         blankRectList.clear()
-        blankRectList.addAll(recordBlankRect())
+        blankRectList.addAll(recordRect())
     }
 
     fun isTouchBlankArea(touchX: Float, touchY: Float): Boolean{

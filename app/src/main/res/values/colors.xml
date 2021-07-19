@@ -7,4 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="calendar_text">#80000000</color>
+    <color name="calendar_text_bold">#DE000000</color>
+    <color name="calendar_tips">#DECCCCCC</color>
+    <color name="calendar_bg">#FFF6F5EC</color>
 </resources>

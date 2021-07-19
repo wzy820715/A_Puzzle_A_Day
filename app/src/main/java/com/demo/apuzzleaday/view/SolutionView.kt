@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
+import com.demo.apuzzleaday.R
 import com.demo.apuzzleaday.calculate.BoundaryMap
 import com.demo.apuzzleaday.dp
 
@@ -39,19 +41,19 @@ class SolutionView(context: Context, attrs: AttributeSet?) : View(context, attrs
         isAntiAlias = true
         style = Paint.Style.FILL
         textSize = 14f.dp
-        color = 0xcc333333.toInt()
+        color = ContextCompat.getColor(context, R.color.calendar_text)
     }
 
     private val paint_text_bold = Paint(paint_text).apply {
         typeface = Typeface.DEFAULT_BOLD
-        color = 0xdd000000.toInt()
+        color = ContextCompat.getColor(context, R.color.calendar_text_bold)
     }
 
     private val paint_grid = Paint().apply {
         isDither = false
         isAntiAlias = true
         style = Paint.Style.FILL
-        color = 0xaa8e7437.toInt()
+        color = ContextCompat.getColor(context, R.color.calendar_bg)
     }
 
     private val paint_empty = Paint(paint_grid).apply {

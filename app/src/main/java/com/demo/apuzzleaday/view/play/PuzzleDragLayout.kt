@@ -7,6 +7,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
@@ -63,21 +64,21 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
         isAntiAlias = true
         style = Paint.Style.FILL
         textSize = 14f.dp
-        color = 0xcc333333.toInt()
+        color = ContextCompat.getColor(context, R.color.calendar_text)
     }
 
     private val paint_text_bold = Paint(paint_text).apply {
         typeface = Typeface.DEFAULT_BOLD
-        color = 0xdd000000.toInt()
+        color = ContextCompat.getColor(context, R.color.calendar_text_bold)
     }
 
     private val paint_tips = Paint(paint_text).apply {
         textSize = 12f.dp
-        color = 0xffcccccc.toInt()
+        color = ContextCompat.getColor(context, R.color.calendar_tips)
     }
 
     private val paint_grid = Paint(paint_text).apply {
-        color = 0xfff6f5ec.toInt()
+        color = ContextCompat.getColor(context, R.color.calendar_bg)
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -253,8 +254,10 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
         if (mDragHelper.isViewUnder(touchedView, e.x.toInt(), e.y.toInt()) &&
             !touchedView.isTouchBlankArea(e.x, e.y)
         ) {
-            childrenPosMap[touchedView] = Pair(touchedView.left, touchedView.top)
-            touchedView.rotatePiece()
+            touchedView.rotatePiece(e.x, e.y){x, y->
+                childrenPosMap[touchedView] =
+                    Pair(touchedView.left + x.toInt(), touchedView.top + y.toInt())
+            }
         }
         return true
     }
@@ -263,7 +266,10 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
         if (mDragHelper.isViewUnder(touchedView, e.x.toInt(), e.y.toInt()) &&
             !touchedView.isTouchBlankArea(e.x, e.y)
         )
-            touchedView.flipPiece()
+            touchedView.flipPiece(e.x, e.y){x, y->
+                childrenPosMap[touchedView] =
+                    Pair(touchedView.left + x.toInt(), touchedView.top + y.toInt())
+            }
     }
 
     override fun onShowPress(e: MotionEvent?) {
