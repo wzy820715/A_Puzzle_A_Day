@@ -118,6 +118,12 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                downX = event.x
+                downY = event.y
+            }
+        }
         mDragHelper.processTouchEvent(event)
         if (!this::touchedView.isInitialized)
             return false
@@ -241,8 +247,6 @@ class PuzzleDragLayout(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun onDown(e: MotionEvent): Boolean {
-        downX = e.x
-        downY = e.y
         return true
     }
 
