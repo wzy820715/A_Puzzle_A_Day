@@ -3,6 +3,7 @@ package com.demo.apuzzleaday.calculate
 import com.demo.apuzzleaday.entity.*
 import kotlinx.coroutines.*
 import java.util.*
+import java.util.concurrent.atomic.AtomicLong
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.system.measureTimeMillis
@@ -30,6 +31,7 @@ private val puzzlePieces = arrayOf(
 )
 
 private val solutionList = mutableListOf<BoundaryMap>()
+private var curThread = AtomicLong(-1L)
 
 const val MONTH = 3
 const val DATE = 6
@@ -77,11 +79,11 @@ suspend fun calculate(month: Int, date: Int,
                         if (checkFinishStop())
                             break
                         launch {
-                            println("----------($row, $col)----------${Thread.currentThread().name}")
-                            var boundaryCopy = boundary.copy()
+                            val boundaryCopy = boundary.copy()
                             //先放Z型拼图(因为Z型拼图只有一种方向的排法)
                             if (try2Place(boundaryCopy, piece_z, row, col)) {
                                 scanPieceGroup(boundaryCopy.copy(), process = process)
+                                curThread.set(-1L)
                             }
                         }
                     }
@@ -104,9 +106,10 @@ fun scanPieceGroup(boundary: BoundaryMap, index: Int = 0, process: (onProcess)? 
     val pieceGroup = puzzlePieces[index]
 
     for (type in pieceGroup.rotatedTypes) {
-        var workCopy = boundary.copy()
+        val workCopy = boundary.copy()
         check(workCopy, type) {
-            if (process != null) {
+            curThread.compareAndSet(-1L, Thread.currentThread().id)
+            if (process != null && Thread.currentThread().id == curThread.get()) {
                 process(it)
             }
             scanPieceGroup(it, index + 1, process)
