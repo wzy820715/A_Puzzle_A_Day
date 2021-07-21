@@ -34,6 +34,7 @@ class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
     private lateinit var result_all_pieces: MutableMap<Char, MutableList<IntArray>>
     private lateinit var binding: LayoutPuzzleSolverBinding
     private lateinit var dataStore: DataStore<Preferences>
+    private var refreshRate = 60
 
     private val HINT_PIECES = charArrayOf('S'.uppercaseChar(), 'U'.uppercaseChar())
 
@@ -53,6 +54,9 @@ class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
     }
 
     private fun init() {
+        requireContext().display?.let {
+            refreshRate = it.refreshRate.toInt()
+        }
         dataStore = requireActivity().createDataStore("setting-pref")
 
         binding.btnDatePick.setOnLongClickListener {
@@ -117,7 +121,7 @@ class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
             DateFormatSymbols().months[month], dayOfMonth.toString())
         binding.btnDatePick.isEnabled = false
         binding.solutionView.setNewDate(month, dayOfMonth)
-        mViewMode.solve(month + 1, dayOfMonth, isShowProcessGUI)
+        mViewMode.solve(month + 1, dayOfMonth, isShowProcessGUI, refreshRate)
     }
 
     private fun updateResult(){

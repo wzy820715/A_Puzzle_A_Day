@@ -8,21 +8,18 @@ import kotlinx.coroutines.launch
 class PuzzleViewModel : ViewModel() {
 
     private val optLiveData = MutableLiveData<PuzzleResult>()
-    val resultLiveData : LiveData<PuzzleResult> = optLiveData
+    val resultLiveData: LiveData<PuzzleResult> = optLiveData
     var isFragmentAdded = false
     var lastCostTime = 0L
 
-    fun solve(month: Int, date: Int, showProcess: Boolean){
+    fun solve(month: Int, date: Int, showProcess: Boolean, refreshRate: Int = 60) {
         viewModelScope.launch {
-//            val time = measureTimeMillis {
-                val resultList = calculate(month, date){
-                    if(showProcess){
-                        optLiveData.postValue(PuzzleResult.Process(it))
-                    }
+            val resultList = calculate(month, date, refreshRate) {
+                if (showProcess) {
+                    optLiveData.postValue(PuzzleResult.Process(it))
                 }
-                optLiveData.value = PuzzleResult.Success(resultList)
-//            }
-//            println("cost: ${time}s total size: ${solutionList.size}")
+            }
+            optLiveData.value = PuzzleResult.Success(resultList)
         }
     }
 

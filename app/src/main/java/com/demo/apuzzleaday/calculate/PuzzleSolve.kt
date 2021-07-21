@@ -32,9 +32,11 @@ private val puzzlePieces = arrayOf(
 
 private val solutionList = mutableListOf<BoundaryMap>()
 private var curThread = AtomicLong(-1L)
+private var curTime = AtomicLong(-1L)
+private var refreshDuration = 33
 
-const val MONTH = 3
-const val DATE = 6
+const val MONTH = 7
+const val DATE = 9
 
 fun main() = runBlocking {
     val time = measureTimeMillis {
@@ -66,8 +68,9 @@ fun setMonthAndDate(boundary: BoundaryMap, month: Int, date: Int) {
     boundary[rel_date_x + 2][rel_date_y - 1] = 'd'
 }
 
-suspend fun calculate(month: Int, date: Int,
+suspend fun calculate(month: Int, date: Int, refreshRate: Int = 60,
                       process: (onProcess)? = null): MutableList<BoundaryMap>{
+    refreshDuration = 1000/refreshRate
     solutionList.clear()
     val boundary = boundaryArray.copy()
     setMonthAndDate(boundary, month, date)
@@ -109,8 +112,13 @@ fun scanPieceGroup(boundary: BoundaryMap, index: Int = 0, process: (onProcess)? 
         val workCopy = boundary.copy()
         check(workCopy, type) {
             curThread.compareAndSet(-1L, Thread.currentThread().id)
-            if (process != null && Thread.currentThread().id == curThread.get()) {
+            if (process != null && Thread.currentThread().id == curThread.get() &&
+                System.currentTimeMillis() - curTime.get() >= refreshDuration) {
                 process(it)
+                curTime.set(-1L)
+            }
+            if(Thread.currentThread().id == curThread.get()){
+                curTime.compareAndSet(-1L, System.currentTimeMillis())
             }
             scanPieceGroup(it, index + 1, process)
         }
