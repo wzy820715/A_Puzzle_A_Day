@@ -3,6 +3,7 @@ package com.demo.apuzzleaday
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
@@ -12,12 +13,20 @@ import com.demo.apuzzleaday.databinding.ActivityPuzzleMainBinding
 import com.demo.apuzzleaday.viewmodel.PuzzleViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import kotlin.properties.Delegates
 
 class PuzzleMainActivity: AppCompatActivity() {
 
     private lateinit var binding: ActivityPuzzleMainBinding
     private lateinit var behavior: BottomSheetBehavior<LinearLayout>
     private val mViewMode: PuzzleViewModel by viewModels()
+    private var backPressedTime by Delegates.observable(0L) { _, old, new ->
+        if (new - old < 3000) {
+            super.onBackPressed()
+        } else {
+            Toast.makeText(this, getString(R.string.double_click_to_exit), Toast.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +68,7 @@ class PuzzleMainActivity: AppCompatActivity() {
         if(behavior.state == BottomSheetBehavior.STATE_EXPANDED){
             behavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }else{
-            super.onBackPressed()
+            backPressedTime = System.currentTimeMillis()
         }
     }
 

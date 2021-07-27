@@ -8,4 +8,5 @@
     <string name="toast_text_gui_off">GUI模式关</string>
     <string name="btn_text_pick_date">选择日期</string>
     <string name="btn_text_showed_date">%1$s%2$s日</string>
+    <string name="double_click_to_exit">再按一次返回鍵退出</string>
 </resources>
