@@ -28,6 +28,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical"
+        android:clickable="true"
         app:behavior_peekHeight="34dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
