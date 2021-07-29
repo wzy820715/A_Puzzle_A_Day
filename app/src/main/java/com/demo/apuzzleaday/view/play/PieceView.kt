@@ -20,15 +20,13 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private var mPaint: Paint
     private val gridWidth = (min(getScreenWidth(context), getScreenHeight(context)) / PuzzleDragLayout.GRID_COUNT).toFloat()
-    private var pieceArray: Array<CharArray>
-    private var originOutlineArray : Array<CharArray?>
-    private var rotateOutlineArray : Array<CharArray?>
     private val doUpdate = ::updateAfterEnd
+    private var pieceArray: Array<CharArray>
+    private var rotateOutlineArray : Array<CharArray?>
+    private val pieceRectList = mutableListOf<Pair<Pair<Int,Int>, RectF>>()
     private val blankRectList: MutableList<RectF> by lazy {
         recordRect()
     }
-    private val pieceRectList = mutableListOf<Pair<Pair<Int,Int>, RectF>>()
-
     private val animatorRotation by lazy{
         ObjectAnimator.ofFloat(this, "rotation", 0f, 90f)
     }
@@ -59,11 +57,6 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             6 -> PuzzleData.frontU
             7 -> PuzzleData.frontI
             else -> arrayOf()
-        }
-
-        originOutlineArray = arrayOfNulls(pieceArray.size)
-        for (index in originOutlineArray.indices) {
-            originOutlineArray[index] = CharArray(pieceArray[0].size)
         }
         rotateOutlineArray = arrayOfNulls(pieceArray[0].size)
         for (index in rotateOutlineArray.indices) {
@@ -107,7 +100,8 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         }
         val moveViewX = (centerX - (pieceArray[0].size - 1 - centerX)) * gridWidth
 
-        pivotX = centerX*gridWidth + gridWidth/2
+        pivotX = centerX * gridWidth + gridWidth/2
+        animatorFlip.setFloatValues(0f, if (pieceArray[0].size/2 > centerX) 180f else -180f)
         animatorFlip.buildAndStart(moveViewX, 0f, true, callback)
     }
 
