@@ -1,11 +1,15 @@
 package com.demo.apuzzleaday.view.play
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.Interpolator
+import android.view.animation.LinearInterpolator
+import androidx.core.animation.doOnEnd
 import com.demo.apuzzleaday.R
 import com.demo.apuzzleaday.getScreenHeight
 import com.demo.apuzzleaday.getScreenWidth
@@ -22,6 +26,9 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         recordRect()
     }
     private val pieceRectList = mutableListOf<Pair<Pair<Int,Int>, RectF>>()
+
+    private lateinit var animator :ObjectAnimator
+    private val reverseInterpolator = ReverseInterpolator()
 
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.PieceView)
@@ -57,14 +64,14 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     fun rotatePiece(touchX: Float, touchY: Float, callback: (Float, Float) -> Unit){
+        if(this::animator.isInitialized && animator.isRunning)
+            return
         val relX = touchX - left
         val relY = touchY - top
-        val touchRect = RectF()
         var centerX = 0
         var centerY = 0
         for (pair in pieceRectList) {
             if(pair.second.contains(relX, relY)){
-                touchRect.set(pair.second)
                 centerX = pair.first.first
                 centerY = pair.first.second
                 break
@@ -72,27 +79,61 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         }
         val moveViewX = (centerX - (pieceArray.size - 1 - centerY)) * gridWidth
         val moveViewY = (centerY - centerX) * gridWidth
-        callback(moveViewX, moveViewY)
-        rotateArray()
-        requestLayout()
+
+        pivotX = centerX*gridWidth + gridWidth/2
+        pivotY = centerY*gridWidth + gridWidth/2
+        animator = ObjectAnimator.ofFloat(this, "rotation", 0f, 90f)
+            .apply {
+                interpolator = LinearInterpolator()
+                duration = 100
+                doOnEnd {
+                    this@PieceView.postDelayed({
+                        removeAllListeners()
+                        interpolator = reverseInterpolator
+                        duration = 0
+                        start()
+                        callback(moveViewX, moveViewY)
+                        rotateArray()
+                        requestLayout()
+                    },2)
+                }
+                start()
+            }
     }
 
     fun flipPiece(touchX: Float, touchY: Float, callback: (Float, Float) -> Unit){
+        if(this::animator.isInitialized && animator.isRunning)
+            return
         val relX = touchX - left
         val relY = touchY - top
-        val touchRect = RectF()
         var centerX = 0
         for (pair in pieceRectList) {
             if(pair.second.contains(relX, relY)){
-                touchRect.set(pair.second)
                 centerX = pair.first.first
                 break
             }
         }
         val moveViewX = (centerX - (pieceArray[0].size - 1 - centerX)) * gridWidth
-        callback(moveViewX, 0f)
-        flipArray()
-        requestLayout()
+
+        pivotX = centerX*gridWidth + gridWidth/2
+        animator = ObjectAnimator.ofFloat(this, "rotationY", 0f, 180f)
+            .apply {
+                interpolator = LinearInterpolator()
+                duration = 100
+                doOnEnd{
+                    this@PieceView.postDelayed({
+                        removeAllListeners()
+                        interpolator = reverseInterpolator
+                        duration = 0
+                        start()
+                        callback(moveViewX, 0f)
+                        flipArray()
+                        requestLayout()
+                    },2)
+                }
+                start()
+            }
+
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -153,7 +194,7 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             for ((x, col) in row.withIndex()) {
                 if(col == '0'){
                     rectList.add(RectF(x * gridWidth, y * gridWidth,
-                            x * gridWidth + gridWidth, y * gridWidth + gridWidth))
+                        x * gridWidth + gridWidth, y * gridWidth + gridWidth))
                 }else{
                     pieceList.add(Pair(Pair(x, y), RectF(x * gridWidth, y * gridWidth,
                         x * gridWidth + gridWidth, y * gridWidth + gridWidth)))
@@ -181,6 +222,10 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             }
         }
         return flag
+    }
+
+    class ReverseInterpolator : Interpolator {
+        override fun getInterpolation(input: Float) = 1 - input
     }
 
 }
