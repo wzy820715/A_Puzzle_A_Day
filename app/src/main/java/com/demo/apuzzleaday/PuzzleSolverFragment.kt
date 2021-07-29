@@ -54,7 +54,7 @@ class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
     }
 
     private fun init() {
-        requireContext().display?.let {
+        requireActivity().windowManager.defaultDisplay?.let {
             refreshRate = it.refreshRate.toInt()
         }
         dataStore = requireActivity().createDataStore("setting-pref")

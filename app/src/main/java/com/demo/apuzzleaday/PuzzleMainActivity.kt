@@ -64,6 +64,11 @@ class PuzzleMainActivity: AppCompatActivity() {
         behavior.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
+    fun onHandleIvClick(@Suppress("UNUSED_PARAMETER") view: View) {
+        behavior.state = if(behavior.state == BottomSheetBehavior.STATE_EXPANDED)
+            BottomSheetBehavior.STATE_COLLAPSED else BottomSheetBehavior.STATE_EXPANDED
+    }
+
     override fun onBackPressed() {
         if(behavior.state == BottomSheetBehavior.STATE_EXPANDED){
             behavior.state = BottomSheetBehavior.STATE_COLLAPSED
