@@ -1,5 +1,6 @@
 package com.demo.apuzzleaday.view.play
 
+import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Canvas
@@ -22,12 +23,19 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private var pieceArray: Array<CharArray>
     private var originOutlineArray : Array<CharArray?>
     private var rotateOutlineArray : Array<CharArray?>
+    private val doUpdate = ::updateAfterEnd
     private val blankRectList: MutableList<RectF> by lazy {
         recordRect()
     }
     private val pieceRectList = mutableListOf<Pair<Pair<Int,Int>, RectF>>()
 
-    private lateinit var animator :ObjectAnimator
+    private val animatorRotation by lazy{
+        ObjectAnimator.ofFloat(this, "rotation", 0f, 90f)
+    }
+    private val animatorFlip by lazy{
+        ObjectAnimator.ofFloat(this, "rotationY", 0f, 180f)
+    }
+    private val linearInterpolator = LinearInterpolator()
     private val reverseInterpolator = ReverseInterpolator()
 
     init {
@@ -64,7 +72,7 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     fun rotatePiece(touchX: Float, touchY: Float, callback: (Float, Float) -> Unit){
-        if(this::animator.isInitialized && animator.isRunning)
+        if(animatorRotation.isRunning)
             return
         val relX = touchX - left
         val relY = touchY - top
@@ -82,27 +90,11 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
         pivotX = centerX*gridWidth + gridWidth/2
         pivotY = centerY*gridWidth + gridWidth/2
-        animator = ObjectAnimator.ofFloat(this, "rotation", 0f, 90f)
-            .apply {
-                interpolator = LinearInterpolator()
-                duration = 100
-                doOnEnd {
-                    this@PieceView.postDelayed({
-                        removeAllListeners()
-                        interpolator = reverseInterpolator
-                        duration = 0
-                        start()
-                        callback(moveViewX, moveViewY)
-                        rotateArray()
-                        requestLayout()
-                    },2)
-                }
-                start()
-            }
+        animatorRotation.buildAndStart(moveViewX, moveViewY, false, callback)
     }
 
     fun flipPiece(touchX: Float, touchY: Float, callback: (Float, Float) -> Unit){
-        if(this::animator.isInitialized && animator.isRunning)
+        if(animatorFlip.isRunning)
             return
         val relX = touchX - left
         val relY = touchY - top
@@ -116,24 +108,35 @@ class PieceView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         val moveViewX = (centerX - (pieceArray[0].size - 1 - centerX)) * gridWidth
 
         pivotX = centerX*gridWidth + gridWidth/2
-        animator = ObjectAnimator.ofFloat(this, "rotationY", 0f, 180f)
-            .apply {
-                interpolator = LinearInterpolator()
-                duration = 100
-                doOnEnd{
-                    this@PieceView.postDelayed({
-                        removeAllListeners()
-                        interpolator = reverseInterpolator
-                        duration = 0
-                        start()
-                        callback(moveViewX, 0f)
-                        flipArray()
-                        requestLayout()
-                    },2)
-                }
-                start()
-            }
+        animatorFlip.buildAndStart(moveViewX, 0f, true, callback)
+    }
 
+    private fun ObjectAnimator.buildAndStart(moveViewX: Float, moveViewY: Float,
+                                             isFlip: Boolean, callback: (Float, Float) -> Unit) {
+        interpolator = linearInterpolator
+        duration = 100
+        doOnEnd(doUpdate(moveViewX, moveViewY, isFlip, callback))
+        start()
+    }
+
+    private fun updateAfterEnd(moveViewX: Float, moveViewY: Float, isFlip: Boolean,
+                               callback: (Float, Float) -> Unit): (animator: Animator) -> Unit{
+        return {
+            this@PieceView.postDelayed({
+                it.apply {
+                    removeAllListeners()
+                    interpolator = reverseInterpolator
+                    duration = 0
+                    start()
+                }
+                callback(moveViewX, moveViewY)
+                if(isFlip)
+                    flipArray()
+                else
+                    rotateArray()
+                requestLayout()
+            },2)
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
