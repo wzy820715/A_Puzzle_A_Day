@@ -99,10 +99,10 @@ class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
                 }
             }
             dataStore.getValueFlow(SHOW_FULL_RESULT, false).collect {
-                binding.checkBox.isChecked = it
+                binding.switchShowAll.isChecked = it
             }
         }
-        binding.checkBox.setOnCheckedChangeListener { _, isChecked ->
+        binding.switchShowAll.setOnCheckedChangeListener { _, isChecked ->
             lifecycleScope.launch {
                 updateResult()
                 dataStore.setValue(SHOW_FULL_RESULT, isChecked)
@@ -129,7 +129,7 @@ class PuzzleSolverFragment: Fragment(), DatePickerDialog.OnDateSetListener{
             return
         binding.solutionView.showSolution(result_bounds){
             result_all_pieces = it
-            if(binding.checkBox.isChecked){
+            if(binding.switchShowAll.isChecked){
                 result_all_pieces
             }else{
                 result_part_pieces.apply {
