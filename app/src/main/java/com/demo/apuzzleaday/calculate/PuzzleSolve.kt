@@ -125,7 +125,7 @@ fun scanPieceGroup(boundary: BoundaryMap, index: Int = 0, process: (onProcess)? 
     }
 }
 
-fun check(
+tailrec fun check(
     boundary: BoundaryMap,
     piece: Piece,
     _startRow: Int = 0, _startCol: Int = -1,
