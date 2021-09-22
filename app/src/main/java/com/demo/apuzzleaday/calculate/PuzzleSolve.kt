@@ -85,7 +85,7 @@ suspend fun calculate(month: Int, date: Int, refreshRate: Int = 60,
                             val boundaryCopy = boundary.copy()
                             //先放Z型拼图(因为Z型拼图只有一种方向的排法)
                             if (try2Place(boundaryCopy, piece_z, row, col)) {
-                                scanPieceGroup(boundaryCopy.copy(), process = process)
+                                scanPieceGroup(boundaryCopy, process = process)
                                 curThread.set(-1L)
                             }
                         }
@@ -149,15 +149,11 @@ tailrec fun check(
     val isPutSuc = try2Place(workCopy, piece, startRow, startCol) {
         workCopy = boundary
     }
-    if (isPutSuc) {
+    if (isPutSuc)
         onSuccess(workCopy)
-        check(boundary.copy(), piece, startRow, startCol) {
-            onSuccess(it)
-        }
-    } else {
-        check(workCopy, piece, startRow, startCol) {
-            onSuccess(it)
-        }
+
+    check(workCopy, piece, startRow, startCol) {
+        onSuccess(it)
     }
 }
 
@@ -224,15 +220,16 @@ fun checkClosedArea(
     checkStartRow: Int,
     checkStartCol: Int
 ): Boolean {
+    val copyMap = workCopy.copy()
     for (i in max(0, checkStartRow - 1) until min(workCopy.size, checkStartRow + 2)) {
         for (j in max(0, checkStartCol - 1) until min(workCopy[0].size, checkStartCol + 2)) {
-            if (isClosed(doCheckClosed(workCopy.copy(), i + 1, j)))
+            if (isClosed(doCheckClosed(copyMap, i + 1, j)))
                 return false
-            if (isClosed(doCheckClosed(workCopy.copy(), i - 1, j)))
+            if (isClosed(doCheckClosed(copyMap, i - 1, j)))
                 return false
-            if (isClosed(doCheckClosed(workCopy.copy(), i, j + 1)))
+            if (isClosed(doCheckClosed(copyMap, i, j + 1)))
                 return false
-            if (isClosed(doCheckClosed(workCopy.copy(), i, j - 1)))
+            if (isClosed(doCheckClosed(copyMap, i, j - 1)))
                 return false
         }
     }
