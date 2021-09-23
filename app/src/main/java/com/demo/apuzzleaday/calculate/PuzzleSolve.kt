@@ -81,13 +81,11 @@ suspend fun calculate(month: Int, date: Int, refreshRate: Int = 60,
                     for (col in boundaryArray[0].indices) {
                         if (checkFinishStop())
                             break
-                        launch {
-                            val boundaryCopy = boundary.copy()
-                            //先放Z型拼图(因为Z型拼图只有一种方向的排法)
-                            if (try2Place(boundaryCopy, piece_z, row, col)) {
-                                scanPieceGroup(boundaryCopy, process = process)
-                                curThread.set(-1L)
-                            }
+                        val boundaryCopy = boundary.copy()
+                        //先放Z型拼图(因为Z型拼图只有一种方向的排法)
+                        if (try2Place(boundaryCopy, piece_z, row, col)) {
+                            scanPieceGroup(boundaryCopy, process = process)
+                            curThread.set(-1L)
                         }
                     }
                 }
