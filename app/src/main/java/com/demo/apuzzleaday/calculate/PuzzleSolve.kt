@@ -150,7 +150,7 @@ tailrec fun check(
     if (isPutSuc)
         onSuccess(workCopy)
 
-    check(workCopy, piece, startRow, startCol) {
+    check(if(isPutSuc) boundary.copy() else workCopy, piece, startRow, startCol) {
         onSuccess(it)
     }
 }
